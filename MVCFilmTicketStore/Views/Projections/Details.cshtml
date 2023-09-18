@@ -1,0 +1,54 @@
+﻿@model MVCFilmTicketStore.Models.Projection
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Projection</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FreeSeatsNum)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FreeSeatsNum)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ProjectionTime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ProjectionTime)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Is3D)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Is3D)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Film)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Film.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Theater)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Theater.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
