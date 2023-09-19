@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="wwwroot\images\profilePictures\" />
+    <Folder Include="wwwroot\images\posters\" />
   </ItemGroup>
 
 </Project>

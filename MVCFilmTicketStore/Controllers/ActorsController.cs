@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVCFilmTicketStore.Data;
 using MVCFilmTicketStore.Models;
+using MVCFilmTicketStore.ViewModels;
 
 namespace MVCFilmTicketStore.Controllers
 {
@@ -20,11 +21,20 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Actors
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchString)
         {
-              return _context.Actor != null ? 
-                          View(await _context.Actor.ToListAsync()) :
-                          Problem("Entity set 'MVCFilmTicketStoreContext.Actor'  is null.");
+            IQueryable<Actor> actors = _context.Actor.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                actors = actors.Where(p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
+            }
+
+            ActorSearchViewModel viewmodel = new ActorSearchViewModel {
+                Actors = await actors.ToListAsync()
+            };
+
+            return View(viewmodel);
         }
 
         // GET: Actors/Details/5

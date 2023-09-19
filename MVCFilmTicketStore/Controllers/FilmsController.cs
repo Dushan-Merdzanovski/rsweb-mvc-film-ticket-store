@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,33 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Films
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string filterString, string searchString)
         {
-            var mVCFilmTicketStoreContext = _context.Film.Include(f => f.Director).Include(p => p.ActorFilms).ThenInclude(p => p.Actor);
-            return View(await mVCFilmTicketStoreContext.ToListAsync());
+            IQueryable<Film> films = _context.Film.AsQueryable().Include(f => f.Director).Include(p => p.ActorFilms).ThenInclude(p => p.Actor);
+
+            IQueryable<FilmGenre> filmGenres = _context.FilmGenre.AsQueryable().Include(p => p.Film).Include(p => p.Genre);
+            IQueryable<string> genreQuery = _context.Genre.OrderBy(m => m.GenreName).Select(m => m.GenreName).Distinct();
+            if (!string.IsNullOrEmpty(filterString))
+            {
+                // filmGenres = filmGenres.Where(p => p.Genre.GenreName.Equals(filterString));
+                filmGenres =
+                    filmGenres.Where(p => p.Genre.GenreName.Equals(filterString))
+                    .Include(f => f.Film).ThenInclude(p => p.Director)
+                    .Include(f => f.Film).ThenInclude(p => p.ActorFilms).ThenInclude(p => p.Actor);
+                films = filmGenres.Select(p => p.Film);
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                films = films.Where(s => s.Title.Contains(searchString));
+            }
+
+            var filmGenreVM = new FilmGenreFilterViewModel
+            {
+                Genres = new SelectList(await genreQuery.ToListAsync()),
+                Films = await films.ToListAsync()
+            };
+            return View(filmGenreVM);
         }
 
         // GET: Films/Details/5

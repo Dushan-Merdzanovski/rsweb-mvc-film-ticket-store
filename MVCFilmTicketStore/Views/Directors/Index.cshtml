@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MVCFilmTicketStore.Models.Director>
+﻿@model MVCFilmTicketStore.ViewModels.DirectorSearchViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -9,42 +9,44 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-controller="Directors" asp-action="Index" method="get">
+    <p>
+        Title: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @Html.DisplayNameFor(model => model.Directors[0].BirthDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BirthDate)
+                @Html.DisplayNameFor(model => model.Directors[0].Country)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Country)
+                @Html.DisplayNameFor(model => model.Directors[0].Gender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Gender)
+                @Html.DisplayNameFor(model => model.Directors[0].ProfilePictureUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProfilePictureUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Age)
+                @Html.DisplayNameFor(model => model.Directors[0].Age)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Directors)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
+                    @Html.DisplayFor(modelItem => item.FullName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.BirthDate)
