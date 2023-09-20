@@ -1,4 +1,5 @@
-﻿@model MVCFilmTicketStore.ViewModels.ActorSearchViewModel
+﻿@using MVCFilmTicketStore.DataTypes.Enums;
+@model MVCFilmTicketStore.ViewModels.ActorSearchViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -24,6 +25,9 @@
                 Name
             </th>
             <th>
+                Profile Picture
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Actors[0].BirthDate)
             </th>
             <th>
@@ -32,9 +36,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Actors[0].Gender)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Actors[0].ProfilePictureUrl)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.Actors[0].Age)
             </th>
@@ -49,6 +51,16 @@
                     @Html.DisplayFor(modelItem => item.FullName)
                 </td>
                 <td>
+                    @if (item.ProfilePictureUrl != null)
+                    {
+                        <img src="~/files_images/@{FolderType.PROFILE_PICTURES.ToString();}/@item.ProfilePictureUrl" height="300px" width="190px" asp-append-version="true" />
+                    }
+                    else
+                    {
+                        <img src="~/files_images/no_picture_found.png" height="300px" width="190px" asp-append-version="true" />
+                    }
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.BirthDate)
                 </td>
                 <td>
@@ -56,9 +68,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Gender)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProfilePictureUrl)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Age)

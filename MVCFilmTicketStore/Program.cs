@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MVCFilmTicketStore.Data;
-using MVCFilmTicketStore.Models;
+using MVCFilmTicketStore.Interfaces;
+using MVCFilmTicketStore.Services;
 
 namespace MVCFilmTicketStore
 {
@@ -15,6 +16,8 @@ namespace MVCFilmTicketStore
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddTransient<IBufferedFileUploadService, BufferedFileUploadLocalService>();
 
             var app = builder.Build();
 

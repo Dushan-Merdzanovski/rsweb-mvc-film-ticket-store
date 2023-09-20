@@ -1,4 +1,5 @@
-﻿@model MVCFilmTicketStore.ViewModels.FilmGenreFilterViewModel
+﻿@using MVCFilmTicketStore.DataTypes.Enums;
+@model MVCFilmTicketStore.ViewModels.FilmGenreFilterViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -52,13 +53,15 @@
         {
             <tr>
                 <td>
-                    @if (item.Poster != null)
-                    {
-                        <img src="~/images/posters/@item.Poster" height="300px" width="190px" asp-append-version="true" />
-                    }
-                    else
-                    {
-                        <img src="~/images/no_picture_found.png" height="300px" width="190px" asp-append-version="true" />
+                    @{
+                        if (item.Poster != null)
+                        {
+                            <img src="~/files_images/@FolderType.POSTERS.ToString()/@item.Poster" height="300px" width="190px" asp-append-version="true" />
+                        }
+                        else
+                        {
+                            <img src="~/files_images/no_picture_found.png" height="300px" width="190px" asp-append-version="true" />
+                        }
                     }
                 </td>
                 <td>

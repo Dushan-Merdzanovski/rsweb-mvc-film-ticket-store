@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Film.Id" />
             <div class="form-group">
@@ -34,11 +34,6 @@
                 <span asp-validation-for="Film.Decription" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Film.Poster" class="control-label"></label>
-                <input asp-for="Film.Poster" class="form-control" />
-                <span asp-validation-for="Film.Poster" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Film.DownloadPosterUrl" class="control-label"></label>
                 <input asp-for="Film.DownloadPosterUrl" class="form-control" />
                 <span asp-validation-for="Film.DownloadPosterUrl" class="text-danger"></span>
@@ -55,10 +50,22 @@
                 <span asp-validation-for="SelectedActors" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Actors</label>
+                <label class="control-label">Genres</label>
                 <select asp-for="SelectedGenres" class="form-control js-example-basic-multiple"
                         asp-items="Model.GenreList"> </select>
                 <span asp-validation-for="SelectedGenres" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Film.Poster" class="control-label"></label>
+                <p></p>
+                <input type="file" name="imageFile" />
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert" style="margin-top:20px">
+                        @ViewBag.Message
+                    </div>
+                }
+                <p></p>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

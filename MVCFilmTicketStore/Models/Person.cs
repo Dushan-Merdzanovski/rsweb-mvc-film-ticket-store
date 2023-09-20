@@ -27,7 +27,6 @@ namespace MVCFilmTicketStore.Models
         [Display(Name = "Nationality")]
         public string? Country { get; set; }
 
-        [MaxLength(50)]
         public Gender? Gender { get; set; }
 
         public string? ProfilePictureUrl { get; set; }

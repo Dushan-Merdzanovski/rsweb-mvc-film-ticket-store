@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVCFilmTicketStore.Data;
+using MVCFilmTicketStore.DataTypes.Enums;
+using MVCFilmTicketStore.Interfaces;
 using MVCFilmTicketStore.Models;
 using MVCFilmTicketStore.ViewModels;
 using static MVCFilmTicketStore.ViewModels.FilmActorsGenresEditViewModel;
@@ -16,10 +18,46 @@ namespace MVCFilmTicketStore.Controllers
     public class FilmsController : Controller
     {
         private readonly MVCFilmTicketStoreContext _context;
+        private readonly IBufferedFileUploadService _bufferedFileUploadService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FilmsController(MVCFilmTicketStoreContext context)
+
+        public FilmsController(
+            MVCFilmTicketStoreContext context,
+            IBufferedFileUploadService bufferedFileUploadService,
+            IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _bufferedFileUploadService = bufferedFileUploadService;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+        // Download button
+        /*<button><a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">Details</a> </button>
+                    @if (item.DownloadUrl != null && item.DownloadUrl != "" && item.DownloadUrl != " ")
+                    {
+                        <button>
+                            <form asp-controller="Books" asp-action="DownloadFile">
+                                <input type="hidden" name="downloadUrl" value="@item.DownloadUrl" />
+                                <input type="submit" value="Download Book PDF" />
+                            </form>
+                        </button>
+                    }
+                    else
+                    {
+                        <button disabled>Book Not Available At The Moment.</button>
+                    }*/
+
+        public async Task<IActionResult> DownloadFile(string downloadUrl,FolderType folder)
+        {
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, folder.ToString(), downloadUrl);
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, "application/pdf", downloadUrl);
         }
 
         // GET: Films
@@ -97,10 +135,24 @@ namespace MVCFilmTicketStore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(FilmActorsGenresEditViewModel viewmodel)
+        public async Task<IActionResult> Create(FilmActorsGenresEditViewModel viewmodel, IFormFile? imageFile)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && viewmodel.Film != null)
             {
+
+                if (imageFile != null)
+                {
+                    string newImagePath = await _bufferedFileUploadService.UploadFile(imageFile, _webHostEnvironment, FolderType.POSTERS);
+                    if (newImagePath != null)
+                    {
+                        ViewBag.Message = "File Upload Successful";
+                    }
+                    else
+                    {
+                        ViewBag.Message = "File Upload Failed";
+                    }
+                    viewmodel.Film.Poster = newImagePath;
+                }
                 _context.Add(viewmodel.Film);
                 await _context.SaveChangesAsync();
 
@@ -110,7 +162,6 @@ namespace MVCFilmTicketStore.Controllers
                     foreach (int genreId in selectedGenreList)
                     {
                         _context.FilmGenre.Add(new FilmGenre { GenreId = genreId, FilmId = viewmodel.Film.Id });
-
                     }
                 }
                 await _context.SaveChangesAsync();
@@ -121,9 +172,9 @@ namespace MVCFilmTicketStore.Controllers
                     foreach (int actorId in selectedActorList)
                     {
                         _context.ActorFilm.Add(new ActorFilm { ActorId = actorId, FilmId = viewmodel.Film.Id });
-
                     }
                 }
+                _context.Update(viewmodel.Film);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -171,7 +222,7 @@ namespace MVCFilmTicketStore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, FilmActorsGenresEditViewModel viewmodel)
+        public async Task<IActionResult> Edit(int id, FilmActorsGenresEditViewModel viewmodel, IFormFile imageFile)
         {
             if (id != viewmodel.Film.Id)
             {
@@ -202,6 +253,24 @@ namespace MVCFilmTicketStore.Controllers
                     await _context.SaveChangesAsync();
 
                     UpdateGenres(id, viewmodel, _context);
+                    await _context.SaveChangesAsync();
+
+                    // FILE UPLOAD
+                    if (imageFile != null)
+                    {
+                        string newImagePath = await _bufferedFileUploadService.UploadFile(imageFile, _webHostEnvironment, FolderType.POSTERS);
+                        if (newImagePath != null)
+                        {
+                            ViewBag.Message = "File Upload Successful";
+                        }
+                        else
+                        {
+                            ViewBag.Message = "File Upload Failed";
+                        }
+                        viewmodel.Film.Poster= newImagePath;
+                        _context.Update(viewmodel.Film);
+                    }
+                    //END FILE UPLOAD
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
