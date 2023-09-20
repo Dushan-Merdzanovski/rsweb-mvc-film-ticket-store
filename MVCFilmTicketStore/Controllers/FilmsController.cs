@@ -63,7 +63,10 @@ namespace MVCFilmTicketStore.Controllers
         // GET: Films
         public async Task<IActionResult> Index(string filterString, string searchString)
         {
-            IQueryable<Film> films = _context.Film.AsQueryable().Include(f => f.Director).Include(p => p.ActorFilms).ThenInclude(p => p.Actor);
+            IQueryable<Film> films = _context.Film.AsQueryable()
+                .Include(f => f.Director)
+                .Include(p => p.ActorFilms).ThenInclude(p => p.Actor)
+                .Include(p => p.Reviews);
 
             IQueryable<FilmGenre> filmGenres = _context.FilmGenre.AsQueryable().Include(p => p.Film).Include(p => p.Genre);
             IQueryable<string> genreQuery = _context.Genre.OrderBy(m => m.GenreName).Select(m => m.GenreName).Distinct();
@@ -73,7 +76,9 @@ namespace MVCFilmTicketStore.Controllers
                 filmGenres =
                     filmGenres.Where(p => p.Genre.GenreName.Equals(filterString))
                     .Include(f => f.Film).ThenInclude(p => p.Director)
-                    .Include(f => f.Film).ThenInclude(p => p.ActorFilms).ThenInclude(p => p.Actor);
+                    .Include(f => f.Film).ThenInclude(p => p.ActorFilms).ThenInclude(p => p.Actor)
+                    .Include(p => p.Film).ThenInclude(p => p.Reviews);
+
                 films = filmGenres.Select(p => p.Film);
             }
 
@@ -101,6 +106,7 @@ namespace MVCFilmTicketStore.Controllers
             var film = await _context.Film
                 .Include(f => f.Director)
                 .Include(p => p.ActorFilms).ThenInclude(p => p.Actor)
+                .Include(p => p.Reviews)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (film == null)
             {

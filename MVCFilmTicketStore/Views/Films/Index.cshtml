@@ -43,7 +43,10 @@
                 @Html.DisplayNameFor(model => model.Films[0].Director)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Films[0].ActorFilms)
+                Actors
+            </th>
+            <th>
+                Average Rating
             </th>
             <th></th>
         </tr>
@@ -88,6 +91,17 @@
                         <a asp-controller="Actors" asp-action="Details" asp-route-id="@actor.ActorId"> @actor.Actor.FullName </a> <br />
                     }
                 </td>
+                @{
+                    var averageRating = item.Reviews?.Count > 0 ? item.Reviews.Average(r => r.Rating) : 0;
+                    if (averageRating == 0)
+                    {
+                        <td>No Reviews.</td>
+                    }
+                    else
+                    {
+                        <td>@Math.Round((decimal)averageRating, 2, MidpointRounding.AwayFromZero)</td>
+                    }
+                }
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

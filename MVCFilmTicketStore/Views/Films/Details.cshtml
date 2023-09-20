@@ -10,10 +10,10 @@
     <h4>Film</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
         <dt class="col-sm-2">
@@ -22,41 +22,41 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Poster)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ReleaseDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ReleaseDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FilmDuration)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FilmDuration)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Decription)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Decription)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DownloadPosterUrl)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DownloadPosterUrl)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Director)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @if (Model.DirectorId != null)
             {
                 <a asp-controller="Directors" asp-action="Details" asp-route-id="@Model.DirectorId">@Html.DisplayFor(model => model.Director.FullName)</a>
             }
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ActorFilms)
+            Actors
         </dt>
         <dd class="col-sm-10">
             @foreach (var actor in Model.ActorFilms)
@@ -66,6 +66,42 @@
                 </a> <br />
             }
         </dd>
+        <dt class="col-sm-2">
+            Average Rating
+        </dt>
+        @{
+            var averageRating = Model.Reviews?.Count > 0 ? Model.Reviews.Average(r => r.Rating) : 0;
+            if (averageRating == 0)
+            {
+                <dd class="col-sm-10">No Reviews.</dd>
+            }
+            else
+            {
+                <dd class="col-sm-10">@Math.Round((decimal)averageRating, 2, MidpointRounding.AwayFromZero)</dd>
+            }
+        }
+
+        @* TODO: Replace Average Rating with a property in a ViewModel, if you have the time*@
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Reviews)
+        </dt>
+        @if (Model.Reviews?.Count == 0)
+        {
+            <dd class="col-sm-10">No reviews.</dd>
+        }
+        else
+        {
+            @foreach (var review in Model.Reviews)
+            {
+                <hr />
+                <dd class="col-sm-10">
+                    <strong>@review.AppUser: </strong>@review.Comment
+                    <br>
+                    <strong>Rating: </strong> @review.Rating
+                </dd>
+            }
+        }
     </dl>
 </div>
 <div>

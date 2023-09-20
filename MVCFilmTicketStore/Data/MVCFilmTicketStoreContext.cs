@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using MVCFilmTicketStore.Areas.Identity.Data;
 using MVCFilmTicketStore.Models;
 
 namespace MVCFilmTicketStore.Data
 {
-    public class MVCFilmTicketStoreContext : DbContext
+    public class MVCFilmTicketStoreContext : IdentityDbContext<MVCFilmTicketStoreUser>
     {
         public MVCFilmTicketStoreContext(DbContextOptions<MVCFilmTicketStoreContext> options)
             : base(options)
@@ -41,6 +44,11 @@ namespace MVCFilmTicketStore.Data
         public DbSet<TicketSeat>? TicketSeat { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
+
+        /*protected override void OnModelCreating(ModelBuilder builder)
         {
             // M:1 Film/Director
             builder.Entity<Film>()
@@ -106,6 +114,6 @@ namespace MVCFilmTicketStore.Data
                 .HasForeignKey(p => p.SeatId);
 
             // OnDelete(DeleteBehavior.NoAction);
-        }
+        }*/
     }
 }

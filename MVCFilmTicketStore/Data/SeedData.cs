@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MVCFilmTicketStore.Areas.Identity.Data;
 using MVCFilmTicketStore.DataTypes.Enums;
 using MVCFilmTicketStore.Models;
 
@@ -7,43 +8,43 @@ namespace MVCFilmTicketStore.Data
 {
     public class SeedData
     {
-        /*        public static async Task CreateUserRoles(IServiceProvider serviceProvider)
-                {
-                    var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                    var UserManager = serviceProvider.GetRequiredService<UserManager<MVCBookStoreUser>>();
-                    IdentityResult roleResult;
-                    //Add Admin Role
-                    var roleCheck = await RoleManager.RoleExistsAsync("Admin");
-                    if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin")); }
-                    MVCBookStoreUser user = await UserManager.FindByEmailAsync("admin@mvcbookstore.com");
-                    if (user == null)
-                    {
-                        var User = new MVCBookStoreUser();
-                        User.Email = "admin@mvcbookstore.com";
-                        User.UserName = "admin@mvcbookstore.com";
-                        string userPWD = "Admin123";
-                        IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
-                        //Add default User to Role Admin
-                        if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Admin"); }
-                    }
+        public static async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<MVCFilmTicketStoreUser>>();
+            IdentityResult roleResult;
+            //Add Admin Role
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin")); }
+            MVCFilmTicketStoreUser user = await UserManager.FindByEmailAsync("admin@mvcbookstore.com");
+            if (user == null)
+            {
+                var User = new MVCFilmTicketStoreUser();
+                User.Email = "admin@mvcbookstore.com";
+                User.UserName = "admin@mvcbookstore.com";
+                string userPWD = "Admin123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Admin"); }
+            }
 
-                    var roleCheck2 = await RoleManager.RoleExistsAsync("User");
-                    if (!roleCheck2) { roleResult = await RoleManager.CreateAsync(new IdentityRole("User")); }
-                    MVCBookStoreUser user2 = await UserManager.FindByEmailAsync("defuser@mvcbookstore.com");
-                    if (user2 == null)
-                    {
-                        var User = new MVCBookStoreUser();
-                        User.Email = "defuser@mvcbookstore.com";
-                        User.UserName = "defuser@mvcbookstore.com";
-                        string userPWD = "User123";
-                        IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
-                        //Add default User to Role Admin
-                        if (chkUser.Succeeded)
-                        {
-                            await UserManager.AddToRoleAsync(User, "User");
-                        }
-                    }
-                }*/
+            var roleCheck2 = await RoleManager.RoleExistsAsync("User");
+            if (!roleCheck2) { roleResult = await RoleManager.CreateAsync(new IdentityRole("User")); }
+            MVCFilmTicketStoreUser user2 = await UserManager.FindByEmailAsync("defuser@mvcbookstore.com");
+            if (user2 == null)
+            {
+                var User = new MVCFilmTicketStoreUser();
+                User.Email = "defuser@mvcbookstore.com";
+                User.UserName = "defuser@mvcbookstore.com";
+                string userPWD = "User123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin
+                if (chkUser.Succeeded)
+                {
+                    await UserManager.AddToRoleAsync(User, "User");
+                }
+            }
+        }
 
         private static List<Seat> SeedSeats()
         {
@@ -70,7 +71,7 @@ namespace MVCFilmTicketStore.Data
             using (var context = new MVCFilmTicketStoreContext(
                 serviceProvider.GetRequiredService<DbContextOptions<MVCFilmTicketStoreContext>>()))
             {
-                // CreateUserRoles(serviceProvider).Wait();
+                CreateUserRoles(serviceProvider).Wait();
 
                 if (context.Film.Any() || context.Ticket.Any() || context.Seat.Any() || context.Review.Any() || context.Projection.Any() || context.Actor.Any() || context.Director.Any() || context.Genre.Any() || context.Theater.Any())
                 {
