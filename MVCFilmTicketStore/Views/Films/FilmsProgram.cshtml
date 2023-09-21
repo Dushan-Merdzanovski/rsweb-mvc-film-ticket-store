@@ -1,0 +1,80 @@
+﻿@using MVCFilmTicketStore.DataTypes.Enums;
+@model IEnumerable<Film>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="justify-content-center" style="text-align: center">
+    Films program of our Cinema
+</h1>
+
+<div class="container border border-5 border-secondary">
+    @foreach (var item in Model)
+    {
+        <div class="container border border-5 border-secondary">
+            <h4 class="d-flex justify-content-center fw-bold fst-italic text-uppercase" style="margin: 30px">
+                @Html.DisplayFor(modelItem => item.Title)
+            </h4>
+            <div class="d-flex justify-content-center">
+                @{
+                    if (item.Poster != null)
+                    {
+                        <img src="~/files_images/@FolderType.POSTERS.ToString()/@item.Poster" height="400px" width="300px" asp-append-version="true" />
+                    }
+                    else
+                    {
+                        <img src="~/files_images/no_picture_found.png" height="300px" width="190px" asp-append-version="true" />
+                    }
+                }
+            </div>
+
+            @* // TODO: Maybe add the director picture of the film on the left side, and the Film actor pictures on the right side, as small icons*@
+
+            <div class="d-flex">
+                <h5>@Html.DisplayNameFor(modelItem => item.Projections):</h5>
+            </div>
+            <div class="d-flex flex-row">
+                @if (item.Projections == null || item.Projections.Count == 0)
+                {
+                    <div class="p-2">No projections!</div>
+                }
+                else
+                {
+                    @foreach (var projection in item.Projections)
+                    {
+                        <div class="p-2 flex-column border border-3 border border-secondary" style="margin: 5px">
+                            <div>
+                                Theater: <em>@projection.Theater.Name</em>
+                            </div>
+                            <div>
+                                Time: <em>@projection.ProjectionTime</em>
+                            </div>
+                            <div>
+                                3D:
+                                @if (projection.Is3D)
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" /><path d="M16.59 7.58L10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" /></svg>
+
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none" /><path d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg>
+                                }
+                            </div>
+                            <div>
+                                Price/Ticket: <em>@projection.Price €</em>
+                            </div>
+
+                            @*// TODO: Set route to new action, for buying a ticket/picking seats*@
+
+                            <form asp-controller="Films" asp-action="Index">
+                                <button type="submit">Get Tickets</button>
+                            </form>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>

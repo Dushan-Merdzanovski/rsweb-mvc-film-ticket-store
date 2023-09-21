@@ -60,6 +60,15 @@ namespace MVCFilmTicketStore.Controllers
             return File(memory, "application/pdf", downloadUrl);
         }
 
+        // GET: Films & Projections - Film Program
+        [HttpGet]
+        public async Task<IActionResult> FilmsProgram()
+        {
+            IQueryable<Film> films = _context.Film.AsQueryable().Include(p => p.Projections).ThenInclude(p => p.Theater);
+
+            return View("~/Views/Films/FilmsProgram.cshtml", await films.ToListAsync());
+        }
+
         // GET: Films
         public async Task<IActionResult> Index(string filterString, string searchString)
         {
