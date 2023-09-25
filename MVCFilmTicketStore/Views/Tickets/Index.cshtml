@@ -6,12 +6,21 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AppUser)
+            </th>
+            <th>
+                Number of seats
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.BoughtTime)
             </th>
@@ -22,38 +31,53 @@
                 @Html.DisplayNameFor(model => model.IsValid)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AppUser)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Projection)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BoughtTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DownloadTicketUrl)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsValid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AppUser)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Projection.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppUser)
+                </td>
+                <td>
+                    @if (item.TicketSeats != null)
+                    {
+                        @item.TicketSeats.Count();
+                    } else
+                    {
+                        @Html.DisplayText("0");
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BoughtTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DownloadTicketUrl)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsValid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Projection.Id)
+                    @Html.DisplayFor(modelItem => item.Projection.Film.Title)
+                    @Html.DisplayFor(modelItem => item.Projection.ProjectionTime)
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+                    {
+                        <button class="btn btn-success"><a style="text-decoration: none; color: white" asp-action="Edit" asp-route-id="@item.Id">Edit</a></button>
+                    }
+                    <button class="btn btn-info"><a style="text-decoration: none; color: white" asp-action="Details" asp-route-id="@item.Id">Details</a></button>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+                    {
+                        <button class="btn btn-danger"><a style="text-decoration: none; color: white" asp-action="Delete" asp-route-id="@item.Id">Delete</a></button>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +49,7 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Projections/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["FilmId"] = new SelectList(_context.Film, "Id", "Title");
@@ -59,6 +62,7 @@ namespace MVCFilmTicketStore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,FreeSeatsNum,ProjectionTime,Price,Is3D,FilmId,TheaterId")] Projection projection)
         {
             if (ModelState.IsValid)
@@ -73,6 +77,7 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Projections/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Projection == null)
@@ -93,6 +98,7 @@ namespace MVCFilmTicketStore.Controllers
         // POST: Projections/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FreeSeatsNum,ProjectionTime,Price,Is3D,FilmId,TheaterId")] Projection projection)
@@ -128,6 +134,7 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Projections/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Projection == null)
@@ -148,6 +155,7 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // POST: Projections/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

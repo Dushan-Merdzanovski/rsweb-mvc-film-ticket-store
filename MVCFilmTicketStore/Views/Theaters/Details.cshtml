@@ -1,4 +1,5 @@
-﻿@model MVCFilmTicketStore.Models.Theater
+﻿@using MVCFilmTicketStore.DataTypes.Enums;
+@model MVCFilmTicketStore.Models.Theater
 
 @{
     ViewData["Title"] = "Details";
@@ -10,39 +11,60 @@
     <h4>Theater</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AllSeatsNum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AllSeatsNum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AllRows)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AllRows)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AllColumns)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AllColumns)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TheaterPicture)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TheaterPicture)
+        <dd class="col-sm-10">
+            @if (Model != null)
+            {
+                <div class="card card-body" style="width: fit-content">
+                    @{
+                        var theaterPicture = @Model.TheaterPicture;
+
+                        if (theaterPicture != null)
+                        {
+                            <img src="~/files_images/@FolderType.THEATERS.ToString()/@theaterPicture" height="400px" width="600px" asp-append-version="true" />
+                        }
+                        else
+                        {
+                            <img src="~/files_images/no_picture_found.jpg" height="200px" width="200px" asp-append-version="true" />
+                        }
+                    }
+                </div>
+            }
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AllSeatsNum)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AllSeatsNum)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AllRows)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AllRows)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AllColumns)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AllColumns)
+        </dd>
+
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <button class="btn btn-success"><a style="text-decoration: none; color: white" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a></button>
+        <span>|</span>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

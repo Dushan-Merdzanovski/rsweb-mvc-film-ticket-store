@@ -1,0 +1,79 @@
+﻿@model IEnumerable<MVCFilmTicketStore.Models.Ticket>
+
+@{
+    ViewData["Title"] = "MyTickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>MyTickets</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AppUser)
+            </th>
+            <th>
+                Number of seats
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BoughtTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsValid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Projection)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppUser)
+                </td>
+                <td>
+                    @if (item.TicketSeats != null)
+                    {
+                        @item.TicketSeats.Count()
+                        ;
+                    }
+                    else
+                    {
+                        @Html.DisplayText("0")
+                        ;
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BoughtTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsValid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Projection.Id)
+                    @Html.DisplayFor(modelItem => item.Projection.Film.Title)
+                    @Html.DisplayFor(modelItem => item.Projection.ProjectionTime)
+                </td>
+                <td>
+                    @if (item.DownloadTicketUrl != null && item.DownloadTicketUrl != "" && item.DownloadTicketUrl != " ")
+                    {
+                        <form asp-controller="Tickets" asp-action="DownloadFile">
+                            <input type="hidden" name="downloadUrl" value="@item.DownloadTicketUrl" />
+                            <input type="hidden" name="folder" value="TICKETS" />
+                            <button class="btn btn-success position-relative" type="submit" value="Download Ticket">Download Ticket</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button disabled class="btn btn-danger position-relative">Ticket not available at the moment.</button>
+                    }
+                    <button class="btn btn-info position-relative"><a style="text-decoration:none; color:white" asp-controller="Reviews" asp-action="WriteReviewFromUser" asp-route-filmId="@item.Projection.FilmId">Write a Review!</a> </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

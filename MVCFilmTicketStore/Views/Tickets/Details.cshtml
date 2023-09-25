@@ -10,39 +10,54 @@
     <h4>Ticket</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BoughtTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BoughtTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DownloadTicketUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DownloadTicketUrl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsValid)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsValid)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.AppUser)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.AppUser)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoughtTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoughtTime)
+        </dd>
+        <dt class="col-sm-2">
+            Number of seats
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                int numSeats = Model.TicketSeats.Count();
+            }
+            @Html.DisplayFor(model => numSeats)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DownloadTicketUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DownloadTicketUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsValid)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsValid)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Projection)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Projection.Id)
+            @Html.DisplayFor(model => model.Projection.Film.Title)
+            @Html.DisplayFor(model => model.Projection.ProjectionTime)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <button class="btn btn-success"><a style="text-decoration: none; color: white" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a></button>
+        <span>|</span>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

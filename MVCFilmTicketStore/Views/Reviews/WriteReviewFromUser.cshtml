@@ -1,0 +1,53 @@
+﻿@model MVCFilmTicketStore.Models.Review
+@using Microsoft.AspNetCore.Identity
+@using MVCFilmTicketStore.Areas.Identity.Data
+@inject SignInManager<MVCFilmTicketStoreUser> SignInManager
+@inject UserManager<MVCFilmTicketStoreUser> UserManager
+
+@{
+    ViewData["Title"] = "Ticket Bought";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Ticket bought for a film</h1>
+
+<h4>Writing a Review for Film: <strong><em>@ViewData["FilmTitle"]</em></strong> </h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="WriteReviewFromUser">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div type="hidden" class="form-group">
+                <input type="hidden" asp-for="AppUser" class="form-control" value="@UserManager.GetUserName(User)" />
+                <span asp-validation-for="AppUser" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comment" class="control-label"></label>
+                <input asp-for="Comment" class="form-control" />
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rating" class="control-label"></label>
+                <input asp-for="Rating" class="form-control" />
+                <span asp-validation-for="Rating" class="text-danger"></span>
+            </div>
+            <div type="hidden" class="form-group">
+                <input type="hidden" asp-for="FilmId" class="form-control" value="@ViewBag.FilmId" />
+                <span asp-validation-for="FilmId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,71 @@
+﻿@model MVCFilmTicketStore.ViewModels.BuyTicketViewModel
+@using MVCFilmTicketStore.Areas.Identity.Data;
+@using MVCFilmTicketStore.DataTypes.Enums;
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<MVCFilmTicketStoreUser> SignInManager
+@inject UserManager<MVCFilmTicketStoreUser> UserManager
+
+@{
+    ViewData["Title"] = "BuyTicket";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>
+    Buy Ticket for: <em>@Html.DisplayFor(model => model.Projection.Film.Title) @Html.DisplayFor(model=> model.Projection.ProjectionTime) Projection</em>
+</h1>
+<hr />
+<div class="row">
+    <div class="col-xl-8">
+        <form asp-action="BuyTicket" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div type="hidden" class="form-group">
+                <input type="hidden" asp-for="NewTicket.AppUser" class="form-control" value="@UserManager.GetUserName(User)" />
+            </div>
+            <div type="hidden" class="form-group">
+                <input type="hidden" asp-for="NewTicket.ProjectionId" class="form-control" value="@Model.Projection.Id" />
+            </div>
+
+            <h4>Theater</h4>
+            <hr />
+            <button style="margin-top: 10px" class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#TheaterCollapse" aria-expanded="false" aria-controls="TheaterCollapse">
+                @Html.DisplayFor(model => model.Projection.Theater.Name)
+            </button>
+
+            <div class="collapse" id="TheaterCollapse" style="width:635px">
+                <div class="card card-body">
+                    @{
+                        if (Model.Projection.Theater != null)
+                        {
+                            var theaterPicture = @Model.Projection.Theater.TheaterPicture;
+
+                            if (theaterPicture != null)
+                            {
+                                <img src="~/files_images/@FolderType.THEATERS.ToString()/@theaterPicture" height="400px" width="600px" asp-append-version="true" />
+                            }
+                            else
+                            {
+                                <img src="~/files_images/no_picture_found.jpg" height="200px" width="200px" asp-append-version="true" />
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <input id="submitForm" type="submit" value="Reserve Seats" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @*    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>*@
+    <script></script>
+}

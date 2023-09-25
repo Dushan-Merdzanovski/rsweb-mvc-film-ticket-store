@@ -1,4 +1,5 @@
-﻿@model MVCFilmTicketStore.ViewModels.DirectorSearchViewModel
+﻿@using MVCFilmTicketStore.DataTypes.Enums;
+@model MVCFilmTicketStore.ViewModels.DirectorSearchViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -6,9 +7,12 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 
 <form asp-controller="Directors" asp-action="Index" method="get">
     <p>
@@ -24,6 +28,9 @@
                 Name
             </th>
             <th>
+                Profile Picture
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Directors[0].BirthDate)
             </th>
             <th>
@@ -31,9 +38,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Directors[0].Gender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Directors[0].ProfilePictureUrl)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Directors[0].Age)
@@ -49,6 +53,16 @@
                     @Html.DisplayFor(modelItem => item.FullName)
                 </td>
                 <td>
+                    @if (item.ProfilePictureUrl != null)
+                    {
+                        <img src="~/files_images/@FolderType.PROFILE_PICTURES_DIRECTORS.ToString()/@item.ProfilePictureUrl" height="300px" width="300px" asp-append-version="true" />
+                    }
+                    else
+                    {
+                        <img src="~/files_images/no_picture_found.jpg" height="300px" width="300px" asp-append-version="true" />
+                    }
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.BirthDate)
                 </td>
                 <td>
@@ -58,15 +72,18 @@
                     @Html.DisplayFor(modelItem => item.Gender)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProfilePictureUrl)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.Age)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+                    {
+                        <button class="btn btn-success"><a style="text-decoration: none; color: white" asp-action="Edit" asp-route-id="@item.Id">Edit</a></button>
+                    }
+                    <button class="btn btn-info"><a style="text-decoration: none; color: white" asp-action="Details" asp-route-id="@item.Id">Details</a></button>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+                    {
+                        <button class="btn btn-danger"><a style="text-decoration: none; color: white" asp-action="Delete" asp-route-id="@item.Id">Delete</a></button>
+                    }
                 </td>
             </tr>
         }

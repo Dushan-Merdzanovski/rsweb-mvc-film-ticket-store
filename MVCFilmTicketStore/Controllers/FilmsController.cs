@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using MVCFilmTicketStore.Areas.Identity.Data;
 using MVCFilmTicketStore.Data;
 using MVCFilmTicketStore.DataTypes.Enums;
 using MVCFilmTicketStore.Interfaces;
@@ -20,51 +23,29 @@ namespace MVCFilmTicketStore.Controllers
         private readonly MVCFilmTicketStoreContext _context;
         private readonly IBufferedFileUploadService _bufferedFileUploadService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<MVCFilmTicketStoreUser> _usermanager;
 
 
         public FilmsController(
             MVCFilmTicketStoreContext context,
             IBufferedFileUploadService bufferedFileUploadService,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            UserManager<MVCFilmTicketStoreUser> usermanager)
         {
             _context = context;
             _bufferedFileUploadService = bufferedFileUploadService;
             _webHostEnvironment = webHostEnvironment;
+            _usermanager = usermanager;
         }
 
-        // Download button
-        /*<button><a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">Details</a> </button>
-                    @if (item.DownloadUrl != null && item.DownloadUrl != "" && item.DownloadUrl != " ")
-                    {
-                        <button>
-                            <form asp-controller="Books" asp-action="DownloadFile">
-                                <input type="hidden" name="downloadUrl" value="@item.DownloadUrl" />
-                                <input type="submit" value="Download Book PDF" />
-                            </form>
-                        </button>
-                    }
-                    else
-                    {
-                        <button disabled>Book Not Available At The Moment.</button>
-                    }*/
-
-        public async Task<IActionResult> DownloadFile(string downloadUrl,FolderType folder)
-        {
-            var path = Path.Combine(_webHostEnvironment.WebRootPath, folder.ToString(), downloadUrl);
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(path, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-            return File(memory, "application/pdf", downloadUrl);
-        }
 
         // GET: Films & Projections - Film Program
         [HttpGet]
         public async Task<IActionResult> FilmsProgram()
         {
-            IQueryable<Film> films = _context.Film.AsQueryable().Include(p => p.Projections).ThenInclude(p => p.Theater);
+            var user = HttpContext.User;
+
+            IQueryable<Film> films = _context.Film.AsQueryable().Include(p => p.Projections).ThenInclude(p => p.Theater).Include(p => p.Director).Include(p => p.ActorFilms).ThenInclude(p => p.Actor);
 
             return View("~/Views/Films/FilmsProgram.cshtml", await films.ToListAsync());
         }
@@ -126,6 +107,7 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Films/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             IEnumerable<Actor> actors = _context.Actor.AsEnumerable();
@@ -149,6 +131,7 @@ namespace MVCFilmTicketStore.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FilmActorsGenresEditViewModel viewmodel, IFormFile? imageFile)
         {
@@ -199,6 +182,7 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Films/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Film == null)
@@ -236,6 +220,7 @@ namespace MVCFilmTicketStore.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, FilmActorsGenresEditViewModel viewmodel, IFormFile imageFile)
         {
@@ -282,7 +267,7 @@ namespace MVCFilmTicketStore.Controllers
                         {
                             ViewBag.Message = "File Upload Failed";
                         }
-                        viewmodel.Film.Poster= newImagePath;
+                        viewmodel.Film.Poster = newImagePath;
                         _context.Update(viewmodel.Film);
                     }
                     //END FILE UPLOAD
@@ -325,6 +310,7 @@ namespace MVCFilmTicketStore.Controllers
         }
 
         // GET: Films/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Film == null)
@@ -345,6 +331,7 @@ namespace MVCFilmTicketStore.Controllers
 
         // POST: Films/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

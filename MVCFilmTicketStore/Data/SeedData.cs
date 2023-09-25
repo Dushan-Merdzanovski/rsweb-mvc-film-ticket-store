@@ -696,15 +696,6 @@ namespace MVCFilmTicketStore.Data
 
                 List<Seat> seats = SeedSeats();
                 context.Seat.AddRange(seats);
-                /*new Seat { *//*Id = 1, *//* Row = 5, Column = 5 },
-                    new Seat { *//*Id = 2, *//* Row = 5, Column = 6 },
-                    new Seat { *//*Id = 3, *//* Row = 8, Column = 5 },
-                    new Seat { *//*Id = 4, *//* Row = 3, Column = 4 },
-                    new Seat { *//*Id = 5, *//* Row = 3, Column = 5 },
-                    new Seat { *//*Id = 6, *//* Row = 1, Column = 1 },
-                    new Seat { *//*Id = 7, *//* Row = 1, Column = 2 },
-                    new Seat { *//*Id = 8, *//* Row = 9, Column = 7 },
-                    new Seat { *//*Id = 9, *//* Row = 9, Column = 8 }*/
                 context.SaveChanges();
 
                 context.TicketSeat.AddRange(

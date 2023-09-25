@@ -49,6 +49,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <button class="btn btn-success"><a style="text-decoration: none; color: white" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a></button>
+        <span>|</span>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

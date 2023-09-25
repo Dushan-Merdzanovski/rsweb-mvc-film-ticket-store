@@ -23,7 +23,7 @@ namespace MVCFilmTicketStore
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             builder.Services.AddRazorPages();
-            builder.Services.AddIdentity<MVCFilmTicketStoreUser, IdentityRole>().AddEntityFrameworkStores<MVCFilmTicketStoreContext>().AddDefaultTokenProviders();
+            builder.Services.AddIdentity<MVCFilmTicketStoreUser, IdentityRole>().AddEntityFrameworkStores<MVCFilmTicketStoreContext>().AddDefaultTokenProviders().AddDefaultUI();
 
             // Add services to the container.
 

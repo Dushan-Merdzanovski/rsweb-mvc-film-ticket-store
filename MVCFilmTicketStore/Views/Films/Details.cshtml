@@ -1,5 +1,9 @@
-﻿@using MVCFilmTicketStore.DataTypes.Enums;
-@model MVCFilmTicketStore.Models.Film
+﻿@model MVCFilmTicketStore.Models.Film
+@using MVCFilmTicketStore.DataTypes.Enums;
+@using MVCFilmTicketStore.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<MVCFilmTicketStoreUser> SignInManager
+@inject UserManager<MVCFilmTicketStoreUser> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -91,8 +95,6 @@
             }
         }
 
-        @* TODO: Replace Average Rating with a property in a ViewModel, if you have the time*@
-
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Reviews)
         </dt>
@@ -115,6 +117,11 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <button class="btn btn-success"><a style="text-decoration: none; color: white" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a></button>
+        <span>|</span>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

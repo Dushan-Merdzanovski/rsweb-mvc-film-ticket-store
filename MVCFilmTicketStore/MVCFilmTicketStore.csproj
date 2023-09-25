@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="wwwroot\files_images\THEATERS\" />
     <Folder Include="wwwroot\files_images\POSTERS\" />
     <Folder Include="wwwroot\files_images\PROFILE_PICTURES\" />
   </ItemGroup>

@@ -3,7 +3,9 @@
     public enum FolderType
     {
         POSTERS,
-        PROFILE_PICTURES,
-        TICKETS
+        PROFILE_PICTURES_ACTORS,
+        PROFILE_PICTURES_DIRECTORS,
+        TICKETS,
+        THEATERS
     }
 }

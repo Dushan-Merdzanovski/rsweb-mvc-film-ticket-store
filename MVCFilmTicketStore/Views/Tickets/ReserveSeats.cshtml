@@ -1,0 +1,164 @@
+﻿@model MVCFilmTicketStore.ViewModels.ReserveSeatsViewModel
+@using MVCFilmTicketStore.Areas.Identity.Data;
+@using MVCFilmTicketStore.DataTypes.Enums;
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<MVCFilmTicketStoreUser> SignInManager
+@inject UserManager<MVCFilmTicketStoreUser> UserManager
+
+@{
+    ViewData["Title"] = "BuyTicket";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>
+    Reserve Seats for your Ticket for: <em>@Html.DisplayFor(model => model.Projection.Film.Title) @Html.DisplayFor(model=> model.Projection.ProjectionTime) Projection</em>
+</h1>
+<hr />
+<div class="row">
+    <div class="col-xl-8">
+        <form asp-action="BuyTicket" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div type="hidden" class="form-group">
+                <input id="ProjectionId" type="hidden" asp-for="Projection.Id" class="form-control" value="@Model.Projection.Id" />
+            </div>
+
+            <div type="hidden" class="form-group">
+                <input id="TicketId" type="hidden" asp-for="NewTicket.Id" class="form-control" value="@Model.NewTicket.Id" />
+            </div>
+
+            <h4 style="margin-top: 10px">Reserve seats</h4>
+            <hr />
+
+            <div style="display: flex">
+                @{
+                    var numSelectedSeats = 0;
+                    if (Model.Projection.Theater != null)
+                    {
+                        <div style="flex-direction: column">
+                            <table border="1">
+                                @for (int i = 0; i < Model.Projection.Theater.AllColumns + 1; i++)
+                                {
+                                    <td style="margin: 10px; justify-content:center;border: solid">@i</td>
+                                }
+                                @for (int i = 0; i < Model.Projection.Theater.AllRows; i++)
+                                {
+                                    <tr style="flex-direction: row">
+                                        @for (int j = 0; j < Model.Projection.Theater.AllColumns; j++)
+                                        {
+
+                                            @if (j == 0)
+                                            {
+                                                <td style="margin: 10px; border: solid">
+                                                    @{
+                                                        var m = i + 1;
+                                                    }
+                                                    @Html.DisplayFor(p => m)
+                                                </td>
+                                            }
+                                            @if (!Model.TakenSeats.Where(p => p.Row == i && p.Column == j).Any())
+                                            {
+                                                <td class="clicker" style="margin: 10px; border: solid; background-color: white; display: flex: table-cell; justify-content: center">
+                                                    @{
+                                                        var id = Model.AllSeats.Where(p => p.Row == i && p.Column == j).Select(p => p.Id).FirstOrDefault();
+                                                        @Html.CheckBox("isSubmitted", new
+                                {
+                                @id = @id,
+                                @class = "submitBox"
+                                })
+                                                    }
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                var sId = Model.TakenSeats.Where(p => p.Row == i && p.Column == j).Select(p => p.Id).FirstOrDefault();
+                                                int seatId = sId;
+                                                <td style="margin: 10px; border: solid; background-color: red">
+                                                    <input id=@seatId type="checkbox" disabled checked value=@seatId />
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="form-group">
+                <input id="submitForm" value="Reserve Seats" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="MyTicketsList">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @*    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>*@
+    <script>
+        var checkedArray = [];
+
+        $(document).ready(function () {
+            $(".clicker").hover(function () {
+                $(this).css("background-color", "green");
+            }, function () {
+                if ($(this).hasClass("clicked") == false) {
+                    $(this).css("background-color", "white");
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $(".clicker").on("click", function () {
+                $(this).toggleClass("clicked");
+            });
+        });
+
+        $(document).ready(function () {
+            $(':checkbox[name=isSubmitted]').on('change', function () {
+
+                checkedArray = $(':checkbox[name=isSubmitted]:checked').map(function () {
+                    return this.id;
+                }).get();
+                console.log("Entered CLICKED BOX");
+                console.log(checkedArray);
+            });
+        });
+
+        $(document).ready(function () {
+            $('#submitForm').click(function () {
+                console.log("Entered AJAX");
+                console.log(checkedArray);
+                var projectionId = $("#ProjectionId").val();
+                console.log(projectionId);
+                var ticketId = $("#TicketId").val();
+                console.log(ticketId);
+                $.ajax({
+                    type: "POST",
+                    traditional: true,
+                    url: "@Url.Action("ReserveSeats", "Tickets")",
+                    data: { 
+                        newSeatIDs: checkedArray,
+                        projectionID: projectionId,
+                        ticketID: ticketId
+                    },
+                    success: function () {
+                        alert("Success!");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                        alert(XMLHttpRequest.responseText);
+                        alert(textStatus);
+                        alert(errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
+}

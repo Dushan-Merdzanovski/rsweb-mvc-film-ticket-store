@@ -16,20 +16,53 @@
             <h4 class="d-flex justify-content-center fw-bold fst-italic text-uppercase" style="margin: 30px">
                 @Html.DisplayFor(modelItem => item.Title)
             </h4>
-            <div class="d-flex justify-content-center">
-                @{
-                    if (item.Poster != null)
+            <div class="d-flex" style="justify-content:space-between">
+                @* justify-content-center *@
+
+                <div class="d-flex justify-content-center" style="flex-direction: column">
+                    @if (item.Director.ProfilePictureUrl != null)
                     {
-                        <img src="~/files_images/@FolderType.POSTERS.ToString()/@item.Poster" height="400px" width="300px" asp-append-version="true" />
+                        <a asp-controller="Directors" asp-action="Details" asp-route-id="@item.DirectorId" style="text-decoration: none">
+                            <img src="~/files_images/@FolderType.PROFILE_PICTURES_DIRECTORS.ToString()/@item.Director.ProfilePictureUrl" height="150px" width="150px" style="border-radius: 50%; border:medium solid black; display: inline-block;" asp-append-version="true" />
+                        </a>
                     }
                     else
                     {
-                        <img src="~/files_images/no_picture_found.png" height="300px" width="190px" asp-append-version="true" />
+                        <img src="~/files_images/no_picture_found.jpg" height="150px" width="150px" style="border-radius: 50%; border:medium solid black; display: inline-block;" asp-append-version="true" />
                     }
-                }
-            </div>
+                </div>
 
-            @* // TODO: Maybe add the director picture of the film on the left side, and the Film actor pictures on the right side, as small icons*@
+
+                <div class="d-flex justify-content-center" style="flex-grow: 4">
+                    @if (item.Poster != null)
+                    {
+
+                        <img src="~/files_images/@FolderType.POSTERS.ToString()/@item.Poster" style="border:solid" height="400px" width="300px" asp-append-version="true" />
+
+                    }
+                    else
+                    {
+                        <img src="~/files_images/no_picture_found.jpg" height="400px" width="300px" asp-append-version="true" />
+                    }
+                </div>
+
+
+                <div class="d-flex justify-content-center" style="flex-direction: column">
+                    @foreach (var actor in item.ActorFilms)
+                    {
+                        @if (actor.Actor.ProfilePictureUrl != null)
+                        {
+                            <a asp-controller="Actors" asp-action="Details" asp-route-id="@actor.ActorId" style="text-decoration: none">
+                                <img src="~/files_images/@FolderType.PROFILE_PICTURES_ACTORS.ToString()/@actor.Actor.ProfilePictureUrl" height="150px" width="150px" style="border-radius: 50%; border:medium solid black; display: inline-block;" asp-append-version="true" />
+                            </a>
+                        }
+                        else
+                        {
+                            <img src="~/files_images/no_picture_found.jpg" height="150px" width="150px" style="border-radius: 50%; border:medium solid black; display: inline-block;" asp-append-version="true" />
+                        }
+                    }
+                </div>
+            </div>
 
             <div class="d-flex">
                 <h5>@Html.DisplayNameFor(modelItem => item.Projections):</h5>
@@ -66,11 +99,27 @@
                                 Price/Ticket: <em>@projection.Price €</em>
                             </div>
 
-                            @*// TODO: Set route to new action, for buying a ticket/picking seats*@
+                            @if (@projection.FreeSeatsNum > 0 && User.Identity.IsAuthenticated && User.IsInRole("User"))
+                            {
+                                <form asp-controller="Tickets" asp-action="BuyTicketGet" asp-route-projectionId="@projection.Id">
+                                    <button style="margin-top: 10px" type="submit" class="btn btn-success position-relative">
+                                        Get Tickets<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
+                                            @projection.FreeSeatsNum
+                                            <span class="visually-hidden">unread messages</span>
+                                        </span>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button disabled style="margin-top: 10px" type="submit" class="btn btn-danger position-relative">
+                                    Get Tickets<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
+                                        @projection.FreeSeatsNum
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                </button>
+                            }
 
-                            <form asp-controller="Films" asp-action="Index">
-                                <button type="submit">Get Tickets</button>
-                            </form>
                         </div>
                     }
                 }
